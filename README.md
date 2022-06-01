@@ -2,6 +2,9 @@
 This repo contains code to generate Semantic Room Wireframe (SRW) annotations from
 Structured3D and LSUN. It also holds the implementation of SRW-Net.
 
+![Junction annotation explained](./image/junction_explanation.svg)
+*Annotated image illustrating false and proper junctions together with semantic line labels.*
+
 ## Clone repo and get submodules
 ```
 git clone --recurse-submodules git@github.com:DavidGillsjo/semantic-room-wireframe.git
