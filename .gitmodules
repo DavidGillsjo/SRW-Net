@@ -1,0 +1,12 @@
+[submodule "libs/dockers"]
+	path = libs/dockers
+	url = git@github.com:DavidGillsjo/dockers.git
+[submodule "libs/Structured3D"]
+	path = libs/Structured3D
+	url = git@github.com:bertjiazheng/Structured3D.git
+[submodule "evaluation/hawp"]
+	path = evaluation/hawp
+	url = git@github.com:DavidGillsjo/hawp.git
+[submodule "evaluation/lcnn"]
+	path = evaluation/lcnn
+	url = git@github.com:DavidGillsjo/lcnn.git

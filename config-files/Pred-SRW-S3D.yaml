@@ -1,0 +1,92 @@
+SOLVER:
+  IMS_PER_BATCH: 11
+  BASE_LR: 0.0004
+  MAX_EPOCH: 40
+  STEPS: (25,)
+  WEIGHT_DECAY: 0.0001
+  CHECKPOINT_PERIOD: 1
+  VAL_PERIOD: 3
+  OPTIMIZER: "ADAM"
+  AMSGRAD: True
+
+DATALOADER:
+  NUM_WORKERS: 5
+DATASETS:
+  IMAGE:
+    PIXEL_MEAN: [142.278, 150.265, 154.994]
+    PIXEL_STD: [64.144, 61.237, 59.377]
+    TO_255: True
+
+  TEST: ("structured3D_opendoors_test",)
+  VAL: ("structured3D_opendoors_val",)
+  TRAIN: ("structured3D_opendoors_train",)
+
+
+  LINE_CLASS_TYPE: 'single' #single or multi
+  DISABLE_CLASSES: False #Must be combined with reducing the jlabel head output to 2 instead of 3.
+
+  HFLIP: False
+  VFLIP: False
+
+ENCODER:
+  NUM_STATIC_POS_LINES: 50
+  NUM_STATIC_NEG_LINES: 10
+
+MODEL:
+  NAME: "Hourglass"
+  DEVICE: "cuda"
+  JUNCTION_LABELS: ['invalid', 'false', 'proper'] # Modfiy jlabel in HEAD_SIZE to match length of this list
+  # JUNCTION_LABELS: ['invalid', 'valid'] # Modfiy jlabel in HEAD_SIZE to match length of this list
+  LINE_LABELS: ['invalid', 'wall', 'floor', 'ceiling', 'window', 'door']
+  # LINE_LABELS: ['invalid', 'wall', 'floor', 'ceiling']
+  USE_GT_JUNCTIONS: False #For testing
+  USE_GT_LINES: False #For testing
+  HEAD_SIZE: [[3], [1], [1], [3], [2]] #Order: ang, dis, dis_residual, jlabel, joff
+  OUT_FEATURE_CHANNELS: 256
+  HGNETS:
+    DEPTH: 4
+    NUM_STACKS: 2
+    NUM_BLOCKS: 1
+    INPLANES: 64
+    NUM_FEATS: 128
+    FREEZE: False
+
+  PARSING_HEAD:
+    USE_RESIDUAL: True
+    MAX_DISTANCE: -1.0 #infinite
+    N_DYN_JUNC:   50
+    N_DYN_POSL:   50
+    N_DYN_NEGL:   0
+    N_DYN_OTHR:   0
+    N_DYN_OTHR2:  50
+    N_PTS0: 32
+    N_PTS1: 8
+    DIM_LOI: 128
+    DIM_FC: 1024
+    N_OUT_JUNC: 80
+    N_OUT_LINE: 800
+    REQUIRE_VALID_JUNCTIONS: False
+
+  GNN:
+    LAYERS: 0
+    JUNCTION_LAYERS: 0
+
+  JUNCTION_LOSS_WEIGHTS:  [0.4, 100, 100]
+  LOSS_WEIGHTS:
+    loss_md: 1.0 # angle regression
+    loss_dis: 1.0 # dis   regression
+    loss_res: 1.0      # residual regression
+    loss_joff: 0.25    # joff  regression
+    loss_jlabel: 1.0   # jlabel  classification
+    loss_pos: 1.0      # pos   classification
+    loss_neg: 1.0      # neg   classification
+    loss_cons: 0.0     # consistency junctions and line
+    loss_gnn_jlabel: 0.0   # jlabel  classification
+    loss_gnn_pos: 0.0      # pos   classification
+    loss_gnn_neg: 0.0      # neg   classification
+
+
+OUTPUT_DIR: "../runs" # Relative script dir
+SCORE_THRESHOLD: 0.7
+LINE_NMS_THRESHOLD: 3
+GRAPH_NMS: False
