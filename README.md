@@ -1,6 +1,7 @@
 # Semantic Room Wireframe Detection
 This repo contains code to generate Semantic Room Wireframe (SRW) annotations from
 Structured3D and LSUN. It also holds the implementation of SRW-Net.
+See the preprint of our [paper at arXiv](https://arxiv.org/abs/2206.00491) for more details, which will appear at ICPR2022.
 
 ![Junction annotation explained](./image/junction_explanation.svg)
 
@@ -130,4 +131,13 @@ and you will find the model weights at `../runs/refinement/<datetime>/model_09.p
 ## Citation
 If you use it in your research, please cite
 ```
+@misc{srw-net,
+  doi = {10.48550/ARXIV.2206.00491},
+  url = {https://arxiv.org/abs/2206.00491},  
+  author = {Gillsjö, David and Flood, Gabrielle and Åström, Kalle},
+  title = {Semantic Room Wireframe Detection from a Single View},
+  publisher = {arXiv},
+  year = {2022},
+}
+
 ```
