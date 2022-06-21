@@ -25,8 +25,8 @@ First, modify [line 7](docker/Dockerfile#L7) so that `gpu_arch` matches your GPU
 Then build and run:
 ```
 cd docker
-./build_docker.sh
-./run_docker.sh
+./build.sh
+./run.sh
 ```
 You will find your `HOME` directory mounted to `/host_home`.
 
