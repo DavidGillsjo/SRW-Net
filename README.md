@@ -69,8 +69,8 @@ To run on the test set, do
 cd scripts
 python3 test.py \
 --config-file ../config/layout-SRW-S3D.yaml \
-CHECKPOINT ../data/model_proposal_s3d.pth
-GNN_CHECKPOINT ../data/model_gnn_s3d.pth
+CHECKPOINT ../data/model_proposal_s3d.pth \
+GNN_CHECKPOINT ../data/model_gnn_s3d.pth \
 OUTPUT_DIR ../runs/test
 ```
 To run on the validation data, add the flag `--val`.
@@ -82,10 +82,11 @@ cd scripts
 python3 test.py \
 --config-file ../config/layout-SRW-S3D.yaml \
 --img-folder <my-image-folder> \
-CHECKPOINT ../data/model_proposal_s3d.pth
-GNN_CHECKPOINT ../data/model_gnn_s3d.pth
+CHECKPOINT ../data/model_proposal_s3d.pth \
+GNN_CHECKPOINT ../data/model_gnn_s3d.pth \
+OUTPUT_DIR <my-output-folder>
 ```
-and the result will be placed in `<my-image-folder>/test`.
+and the result will be placed in `<my-output-folder>`, see `layout-SRW-S3D.yaml` for default value.
 
 ## Train
 The Predictor and the Refinement module are trained separately in the following steps
