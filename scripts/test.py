@@ -39,15 +39,13 @@ class ModelTester:
         self.output_dir = output_dir if output_dir else cfg.OUTPUT_DIR
         self.plot_dir = osp.join(self.output_dir, 'plots')
         os.makedirs(self.plot_dir, exist_ok=True)
-        if 'GNN' in cfg.MODEL.NAME:
-            self.datasets = build_gnn_test_dataset(cfg, validation = validation)
-        else:
-            self.datasets = build_test_dataset(cfg, validation = validation)
+
         self.nbr_plots = nbr_plots
-        self.logger = logging.getLogger("hawp.testing")
+        self.logger = logging.getLogger("srw.testing")
         self.tb_logger = SummaryWriter(output_dir) if write_tb else None
         self.wandb_run = wandb_run
         self.show_legend = show_legend
+        self.validation = validation
 
         self.img_transform =  Compose(
             [ResizeImage(cfg.DATASETS.IMAGE.HEIGHT,
@@ -70,6 +68,13 @@ class ModelTester:
 
         self.lm = LabelMapper(cfg.MODEL.LINE_LABELS, cfg.MODEL.JUNCTION_LABELS, disable=cfg.DATASETS.DISABLE_CLASSES)
         self.img_viz = ImagePlotter(self.lm.get_line_labels(), self.lm.get_junction_labels())
+
+    @property
+    def datasets(self):
+        if 'GNN' in self.cfg.MODEL.NAME:
+            return build_gnn_test_dataset(self.cfg, validation = self.validation)
+        else:
+            return build_test_dataset(self.cfg, validation = self.validation)
 
     def _init_model(self):
         if 'GNN' in cfg.MODEL.NAME:
@@ -115,8 +120,7 @@ class ModelTester:
                 yield (epoch, model)
 
 
-    def _tb_plots(self, epoch, im, im_name, output, extra_info, idx = None):
-        filetype ='pdf'
+    def _tb_plots(self, epoch, im, im_name, output, extra_info, idx = None, filetype ='pdf'):
         fig = self.img_viz.plot_pred(im, im_name, output, extra_info, score_threshold = self.score_threshold, ignore_invalid_junc = True, show_legend=self.show_legend)
         fname = '{}_E{:02}.{}'.format(osp.splitext(im_name)[0], epoch,filetype) if idx is None else 'E{:02}I{:02}_lj.{}'.format(epoch, idx,filetype)
         fig_path = osp.join(self.plot_dir, fname)
@@ -427,7 +431,6 @@ class ModelTester:
                     plt.savefig(osp.join(self.plot_dir, fname))
 
     def test_model_on_folder(self, folder_path, model = None):
-        print('In test model')
         if model is None:
             model = self._load_model_from_cfg()
         model.eval()
@@ -439,6 +442,7 @@ class ModelTester:
             if osp.splitext(fn)[1].lower() in img_ext:
                 img_paths.append(osp.join(folder_path, fn))
 
+        result = {}
         self.logger.info('Testing on folder {}'.format(folder_path))
         for i, img_path in enumerate(tqdm(img_paths)):
             image_int = io.imread(img_path)
@@ -455,7 +459,17 @@ class ModelTester:
                 output = to_device(output,'cpu')
                 self.run_nms(output)
 
-            self._tb_plots(0, image_int, filename, output, None)
+            self._tb_plots(0, image_int, filename, output, None, filetype = 'png')
+
+            for k in output.keys():
+                if isinstance(output[k], torch.Tensor):
+                    output[k] = output[k].tolist()
+            result[filename] = output
+
+        outpath_dataset = osp.join(self.output_dir,'result.json')
+        self.logger.info(f'Writing the results to {outpath_dataset}')
+        with open(outpath_dataset,'w') as _out:
+            json.dump(result,_out)
 
     def test_model(self, model = None, epoch = 0, model_graph = False):
         if model is None:
@@ -520,7 +534,7 @@ class ModelTester:
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='HAWP Testing')
+    parser = argparse.ArgumentParser(description='SRW Testing')
 
     parser.add_argument("--config-file",
                         metavar="FILE",
@@ -576,12 +590,14 @@ if __name__ == "__main__":
     cfg.merge_from_list(args.opts)
     cfg.freeze()
 
-    if args.val:
+    if args.img_folder:
+        output_dir = cfg.OUTPUT_DIR
+    elif args.val:
         output_dir = osp.join(cfg.OUTPUT_DIR, 'val')
     else:
         output_dir = osp.join(cfg.OUTPUT_DIR, 'test')
     os.makedirs(output_dir, exist_ok=True)
-    logger = setup_logger('hawp', output_dir)
+    logger = setup_logger('srw', output_dir)
     logger.info(args)
     logger.info("Loaded configuration file {}".format(args.config_file))
 

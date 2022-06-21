@@ -41,7 +41,7 @@ class LossReducer(object):
 
 
 def train(cfg, resume=False, val_period=None, timestamp = ''):
-    logger = logging.getLogger("layout-hawp.trainer")
+    logger = logging.getLogger("layout-srw.trainer")
     tb_logger = SummaryWriter(cfg.OUTPUT_DIR)
     device = cfg.MODEL.DEVICE
     val_period = cfg.SOLVER.VAL_PERIOD
@@ -170,7 +170,7 @@ def train(cfg, resume=False, val_period=None, timestamp = ''):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='Layout HAWP Training')
+    parser = argparse.ArgumentParser(description='Layout SRW Training')
 
     parser.add_argument("--config-file",
                         metavar="FILE",
@@ -207,7 +207,7 @@ if __name__ == "__main__":
 
     cfg.freeze()
 
-    logger = setup_logger('layout-hawp', cfg.OUTPUT_DIR, out_file='train-{}.log'.format(timestamp))
+    logger = setup_logger('layout-srw', cfg.OUTPUT_DIR, out_file='train-{}.log'.format(timestamp))
     logger.info(args)
     logger.info("Loaded configuration file {}".format(args.config_file))
 
