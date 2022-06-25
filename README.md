@@ -7,6 +7,8 @@ See the preprint of our [paper at arXiv](https://arxiv.org/abs/2206.00491) for m
 
 *Annotated image illustrating false and proper junctions together with semantic line labels.*
 
+<a href="https://replicate.com/davidgillsjo/srw-net"><img src="https://replicate.com/davidgillsjo/srw-net/badge"></a>
+
 ## Clone repo and get submodules
 ```
 git clone --recurse-submodules git@github.com:DavidGillsjo/semantic-room-wireframe.git
