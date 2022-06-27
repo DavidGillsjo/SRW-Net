@@ -1,0 +1,42 @@
+build:
+  gpu: true
+  cuda: "10.2"
+  python_version: "3.8"
+  system_packages:
+    - "libgl1-mesa-glx"
+    - "libglib2.0-0"
+  python_packages:
+    - torch==1.10.1
+    - torchvision==0.11.2
+    - tb-nightly==2.10.0a20220619
+    - future==0.18.2
+    - opencv-python==4.5.5.62
+    - Cython==0.29.30
+    - matplotlib==3.3.4
+    - numpy==1.19.5
+    - scipy==1.5.4
+    - pyyaml==6.0
+    - gitpython==3.1.18
+    - seaborn==0.11.2
+    - open3d==0.15.2
+    - descartes==1.1.0
+    - shapely==1.8.2
+    - panda3d==1.10.11
+    - yacs==0.1.8
+    - requests==2.27.1
+    - scikit-image==0.17.2
+    - tabulate==0.8.9
+    - networkx==2.5.1
+    - tqdm==4.64.0
+    - wandb==0.12.18
+    - h5py==3.1.0
+  run:
+    - pip3 install --no-cache-dir torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geometric -f https://data.pyg.org/whl/torch-1.10.1+cu102.html
+    - export PYTHONPATH=$PYTHONPATH:$(pwd)
+    - git clone https://github.com/bertjiazheng/Structured3D.git libs/Structured3D
+    - git clone https://github.com/DavidGillsjo/hawp.git evaluation/hawp
+    - git clone https://github.com/DavidGillsjo/lcnn.git evaluation/lcnn
+    - bash ./build.sh
+
+predict: "scripts/predict.py:Predictor"
+
